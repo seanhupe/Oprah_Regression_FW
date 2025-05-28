@@ -1,0 +1,7 @@
+FAILURE: Link 'Help/FAQ' (URL: /app/helpfaq.html) failed: Page title expected to be 're.compile('Help/FAQ')'
+Actual value: The Oprah Winfrey Network Help Center - FAQs | OWN 
+Call log:
+  - PageAssertions.to_have_title with timeout 10000ms
+  - waiting for locator(":root")
+    14 × locator resolved to <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths csstransformspreserv…>…</html>
+       - unexpected value "The Oprah Winfrey Network Help Center - FAQs | OWN"

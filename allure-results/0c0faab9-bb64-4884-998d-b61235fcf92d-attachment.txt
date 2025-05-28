@@ -1,0 +1,7 @@
+FAILURE: Link 'Inspiration' (URL: /app/inspiration.html) failed: Page title expected to be 're.compile('Inspiration - Oprah.com', re.IGNORECASE)'
+Actual value: Inspiration - Happiness and Self-Help Advice - Oprah.com 
+Call log:
+  - PageAssertions.to_have_title with timeout 10000ms
+  - waiting for locator(":root")
+    14 × locator resolved to <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths csstransformspreserv…>…</html>
+       - unexpected value "Inspiration - Happiness and Self-Help Advice - Oprah.com"
