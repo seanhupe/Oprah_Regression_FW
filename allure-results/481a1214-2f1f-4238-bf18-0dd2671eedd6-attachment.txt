@@ -1,1 +1,0 @@
-FAILURE: Link 'Help/FAQ' (URL: /app/helpfaq.html) failed: 'Expect' object has no attribute 'string_containing'

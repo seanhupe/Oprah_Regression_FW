@@ -1,7 +1,0 @@
-FAILURE: Link 'Watch OWN' (URL: https://www.oprah.com/app/own-tv.html) failed: Page title expected to be 're.compile('OWN TV Shows and Videos', re.IGNORECASE)'
-Actual value: OWN TV Network - Watch OWN TV Shows & Episodes Online 
-Call log:
-  - PageAssertions.to_have_title with timeout 10000ms
-  - waiting for locator(":root")
-    14 × locator resolved to <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths">…</html>
-       - unexpected value "OWN TV Network - Watch OWN TV Shows & Episodes Online"

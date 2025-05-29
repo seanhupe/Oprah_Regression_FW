@@ -1,7 +1,0 @@
-FAILURE: Link 'Books' (URL: /app/books.html) failed: Page title expected to be 're.compile('Books')'
-Actual value: Oprah's Book Club: Complete Reading List & Reviews 
-Call log:
-  - PageAssertions.to_have_title with timeout 10000ms
-  - waiting for locator(":root")
-    13 × locator resolved to <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths">…</html>
-       - unexpected value "Oprah's Book Club: Complete Reading List & Reviews"

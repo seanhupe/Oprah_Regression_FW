@@ -1,1 +1,0 @@
-FAILURE: Link 'Inspiration' (URL: /app/inspiration.html) failed: 'Expect' object has no attribute 'string_containing'
