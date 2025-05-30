@@ -1,44 +1,70 @@
 # pages/base_page.py
-from playwright.sync_api import Page, expect, Locator
-import re  # For regex in URLs or text matching
-
+import re
+import time
+from playwright.sync_api import Page, expect, TimeoutError as PlaywrightTimeoutError, Locator
 
 class BasePage:
     def __init__(self, page: Page):
         self.page = page
-        self.base_url = "https://www.oprah.com/"
-        self.cookie_agree_button = self.page.get_by_role("button", name="AGREE TO ALL", exact=True)
 
     def goto(self, url: str):
-        """Navigates to a given URL."""
+        """
+        Navigates to a given URL and waits for the page to load,
+        with increased timeout and error handling.
+        """
         print(f"DEBUG: Navigating to URL: {url}")
-        self.page.goto(url, wait_until='domcontentloaded', timeout=60000)
-        print(f"DEBUG: Successfully loaded page: {self.page.url}")
+        try:
+            # Wait for 'load' state first, which means basic HTML and resources are loaded
+            self.page.goto(url, wait_until="load", timeout=90000) # Increased timeout significantly
+            print(f"DEBUG: Page loaded to '{url}' (load state).")
+
+            # Optional: wait for 'networkidle' if the page has lots of dynamic content
+            # This can be flaky, so we'll put it in a try-except
+            try:
+                self.page.wait_for_load_state("networkidle", timeout=30000) # Give it 30 more seconds for network to idle
+                print(f"DEBUG: Page reached 'networkidle' state for '{url}'.")
+            except PlaywrightTimeoutError:
+                print(f"WARNING: Page '{url}' did not reach 'networkidle' state within 30s, proceeding anyway.")
+
+        except PlaywrightTimeoutError as e:
+            print(f"ERROR: Navigation to {url} timed out after 90s: {e}")
+            self.page.screenshot(path="failed_goto_timeout.png", full_page=True)
+            raise AssertionError(f"Failed to navigate to {url}: {e}. Check failed_goto_timeout.png")
+        except Exception as e:
+            print(f"ERROR: An unexpected error occurred during navigation to {url}: {e}")
+            self.page.screenshot(path="failed_goto_general_error.png", full_page=True)
+            raise AssertionError(f"Failed to navigate to {url} due to unexpected error: {e}. Check failed_goto_general_error.png")
 
     def dismiss_cookie_banner(self):
-        """Attempts to dismiss the cookie consent banner if present."""
-        print("DEBUG: Checking for cookie consent banner...")
+        """
+        Attempts to dismiss the cookie banner if it appears.
+        """
+        print("DEBUG: Checking for cookie banner...")
         try:
-            # Wait short time for the button to appear; it's okay if it doesn't.
-            expect(self.cookie_agree_button).to_be_visible(timeout=7000)
-            print("DEBUG: Cookie 'AGREE TO ALL' button found. Clicking it...")
-            self.cookie_agree_button.click(timeout=5000)
-            print("DEBUG: Cookie 'AGREE TO ALL' button clicked.")
-            # Wait for the button to disappear
-            expect(self.cookie_agree_button).not_to_be_visible(timeout=5000)
-            print("DEBUG: Cookie banner dismissed successfully.")
+            cookie_accept_button = self.page.locator("#onetrust-accept-btn-handler")
+            # Wait for the cookie banner to be visible and then click it
+            cookie_accept_button.wait_for(state='visible', timeout=10000)
+            cookie_accept_button.click(timeout=5000)
+            print("DEBUG: Cookie banner dismissed.")
+            # Wait for banner to disappear
+            cookie_accept_button.wait_for(state='hidden', timeout=5000)
+        except PlaywrightTimeoutError:
+            print("DEBUG: Cookie banner did not appear within timeout, or already dismissed.")
         except Exception as e:
-            print(f"DEBUG: Cookie banner not found or could not be dismissed within timeout: {e}. Proceeding...")
-            # Optional: self.page.screenshot(path="debug_cookie_banner_not_dismissed.png", full_page=True)
+            print(f"WARNING: An error occurred while trying to dismiss cookie banner: {e}")
+            # Don't fail the test for this, but log the warning
 
-    def verify_current_url(self, expected_url_regex: str):
-        """Verifies the current page URL matches a regex."""
-        print(f"DEBUG: Verifying current URL matches regex: '{expected_url_regex}'...")
-        expect(self.page).to_have_url(re.compile(expected_url_regex), timeout=15000)
-        print(f"DEBUG: Current URL '{self.page.url}' verified.")
-
-    def verify_element_visible(self, locator_description: str, locator: Locator):
-        """Verifies a given locator is visible on the page."""
-        print(f"DEBUG: Verifying '{locator_description}' is visible...")
-        expect(locator).to_be_visible(timeout=10000)
-        print(f"DEBUG: '{locator_description}' is visible.")
+    def verify_element_visible(self, element_name: str, locator: Locator, timeout: int = 20000):
+        """
+        Verifies if an element is visible on the page within a given timeout.
+        """
+        print(f"DEBUG: Verifying visibility of '{element_name}'...")
+        try:
+            locator.wait_for(state="visible", timeout=timeout)
+            print(f"DEBUG: '{element_name}' is visible.")
+        except PlaywrightTimeoutError:
+            self.page.screenshot(path=f"failed_to_see_{element_name.replace(' ', '_')}.png", full_page=True)
+            raise AssertionError(f"'{element_name}' was not visible within {timeout}ms. Check screenshot.")
+        except Exception as e:
+            self.page.screenshot(path=f"failed_to_see_{element_name.replace(' ', '_')}_unexpected.png", full_page=True)
+            raise AssertionError(f"An unexpected error occurred while verifying '{element_name}': {e}. Check screenshot.")
